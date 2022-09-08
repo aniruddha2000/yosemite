@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example
+  namespace: book
+spec:
+  containers:
+    - name: empty
+      image: hello-world
+      command: ["cat"]
