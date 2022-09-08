@@ -39,11 +39,16 @@ func main() {
 		os.Exit(0)
 	}
 
-	err = client.CreatePodWithNamespace("test-ns", "example", clientset)
+	err = client.CheckPodEnv("test-ns", clientset)
 	if err != nil {
-		fmt.Printf("error creating pod with namespace: %v\n", err)
-		os.Exit(0)
+		fmt.Printf("error checking envvar: %v", err)
 	}
+
+	// err = client.CreatePodWithNamespace("test-ns", "example", clientset)
+	// if err != nil {
+	// 	fmt.Printf("error creating pod with namespace: %v\n", err)
+	// 	os.Exit(0)
+	// }
 
 	// err = client.DeletePodWithNamespce("book", "example", clientset)
 	// if err != nil {

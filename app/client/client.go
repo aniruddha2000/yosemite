@@ -14,6 +14,14 @@ var (
 	ctx = context.TODO()
 )
 
+func ListPodWithNamespace(namspace string, clientset *kubernetes.Clientset) (*v1.PodList, error) {
+	pods, err := clientset.CoreV1().Pods(namspace).List(ctx, metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+	return pods, nil
+}
+
 func CreatePodWithNamespace(namespace, name string, clientset *kubernetes.Clientset) error {
 	podObj := &v1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
@@ -36,7 +44,7 @@ func CreatePodWithNamespace(namespace, name string, clientset *kubernetes.Client
 			fmt.Printf("Pod already exists with name %s\n", name)
 			return nil
 		} else {
-			return err
+			return fmt.Errorf("create pod: %s", err.Error())
 		}
 	}
 	fmt.Printf("Pod object created with name %s\n", pod.ObjectMeta.Name)
@@ -57,7 +65,7 @@ func CrateNameSpace(namespeceName string, clientset *kubernetes.Clientset) error
 			fmt.Printf("Namespace already exists with name %s\n", namespeceName)
 			return nil
 		} else {
-			return err
+			return fmt.Errorf("create namespace: %s", err.Error())
 		}
 	}
 	fmt.Printf("namespace created %v\n", namespeceName)
@@ -72,7 +80,7 @@ func DeletePodWithNamespce(namespace, name string, clientset *kubernetes.Clients
 			fmt.Printf("Pod don't exists with name %s\n", name)
 			return nil
 		} else {
-			return err
+			return fmt.Errorf("delete pod: %s", err.Error())
 		}
 	}
 	fmt.Printf("pod deleted with name: %v\n", name)
