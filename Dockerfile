@@ -1,5 +1,5 @@
 FROM ubuntu
 
-COPY ./bin/do_client_go ./do_client_go
+COPY ./bin/yosemite ./yosemite
 
-ENTRYPOINT ["./do_client_go"]
+ENTRYPOINT ["./yosemite"]

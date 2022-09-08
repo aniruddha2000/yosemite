@@ -33,13 +33,13 @@ func main() {
 		os.Exit(0)
 	}
 
-	// err = client.CrateNameSpace("book", clientset)
-	// if err != nil {
-	// 	fmt.Printf("error creating namespace: %v\n", err)
-	// 	os.Exit(0)
-	// }
+	err = client.CrateNameSpace("test-ns", clientset)
+	if err != nil {
+		fmt.Printf("error creating namespace: %v\n", err)
+		os.Exit(0)
+	}
 
-	err = client.CreatePodWithNamespace("default", "example", clientset)
+	err = client.CreatePodWithNamespace("test-ns", "example", clientset)
 	if err != nil {
 		fmt.Printf("error creating pod with namespace: %v\n", err)
 		os.Exit(0)
