@@ -18,7 +18,7 @@ spec:
         app: client
     spec:
       containers:
-      - image: aniruddhabasak/do_client_go:0.3.0
+      - image: aniruddhabasak/do_client_go:0.3.1
         name: do-client-go-qtfxw
         resources: {}
 status: {}
