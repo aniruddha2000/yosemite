@@ -17,6 +17,7 @@ func main() {
 	log.Printf("Checking Pods for namespace %s\n", nameSpace)
 	c := client.NewClient()
 	c.C = service.Init()
+	
 
 	c.CheckPodEnv(nameSpace)
 }

@@ -3,6 +3,11 @@ package client
 import (
 	"fmt"
 	"log"
+	"time"
+
+	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/informers"
+	"k8s.io/client-go/tools/cache"
 )
 
 const (
@@ -10,10 +15,22 @@ const (
 )
 
 func (c *Client) CheckPodEnv(ns string) {
-	err := c.check(ns)
-	if err != nil {
-		log.Fatalf("error checking envvar: %v", err)
-	}
+	informerFactory := informers.NewSharedInformerFactory(c.C, 30*time.Second)
+
+	podInformer := informerFactory.Core().V1().Pods()
+	podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc: func(obj interface{}) {
+			log.Println("Pod added. Let's start checking!")
+			err := c.check(ns)
+			if err != nil {
+				log.Fatalf("error checking envvar: %v", err)
+			}
+		},
+	})
+
+	informerFactory.Start(wait.NeverStop)
+	informerFactory.WaitForCacheSync(wait.NeverStop)
+
 }
 
 func (c *Client) check(namespace string) error {
@@ -27,7 +44,7 @@ func (c *Client) check(namespace string) error {
 		for _, cntr := range pod.Spec.Containers {
 			for _, env := range cntr.Env {
 				if env.Name == ENVNAME {
-					log.Println("Env value set. All set to go!")
+					log.Printf("Pod name: %s has envvar. All set to go!", pod.Name)
 					envSet = true
 				}
 			}

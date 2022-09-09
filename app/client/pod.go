@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"log"
 
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -36,13 +37,13 @@ func CreatePodWithNamespace(namespace, name string, clientset *kubernetes.Client
 	pod, err := clientset.CoreV1().Pods(namespace).Create(ctx, podObj, metav1.CreateOptions{})
 	if err != nil {
 		if errors.IsAlreadyExists(err) {
-			fmt.Printf("Pod already exists with name %s\n", name)
+			log.Printf("Pod already exists with name %s\n", name)
 			return nil
 		} else {
 			return fmt.Errorf("create pod: %s", err.Error())
 		}
 	}
-	fmt.Printf("Pod object created with name %s\n", pod.ObjectMeta.Name)
+	log.Printf("Pod object created with name %s\n", pod.ObjectMeta.Name)
 
 	return nil
 }
@@ -51,13 +52,13 @@ func DeletePodWithNamespce(namespace, name string, clientset *kubernetes.Clients
 	err := clientset.CoreV1().Pods(namespace).Delete(ctx, name, metav1.DeleteOptions{})
 	if err != nil {
 		if errors.IsNotFound(err) {
-			fmt.Printf("Pod don't exists with name %s\n", name)
+			log.Printf("Pod don't exists with name %s\n", name)
 			return nil
 		} else {
 			return fmt.Errorf("delete pod: %s", err.Error())
 		}
 	}
-	fmt.Printf("pod deleted with name: %v\n", name)
+	log.Printf("pod deleted with name: %v\n", name)
 
 	return nil
 }
