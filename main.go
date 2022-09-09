@@ -1,58 +1,22 @@
 package main
 
 import (
-	"fmt"
-	"os"
-	"path/filepath"
-
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
+	"flag"
+	"log"
 
 	"github.com/aniruddha2000/yosemite/app/client"
+	"github.com/aniruddha2000/yosemite/app/service"
 )
 
 func main() {
-	config, err := rest.InClusterConfig()
-	if err != nil {
-		kubeconfig := filepath.Join("home", "aniruddha", ".kube", "config")
-		if envvar := os.Getenv("KUBECONFIG"); len(envvar) > 0 {
-			kubeconfig = envvar
-		}
+	var nameSpace string
 
-		config, err = clientcmd.BuildConfigFromFlags("", kubeconfig)
-		if err != nil {
-			fmt.Printf("kubeconfig can't be loaded: %v\n", err)
-			os.Exit(0)
-		}
-	}
+	flag.StringVar(&nameSpace, "ns", "test-ns",
+		"namespace name on which the checking is going to take place")
 
-	clientset, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		fmt.Printf("error getting config client: %v\n", err)
-		os.Exit(0)
-	}
+	log.Printf("Checking Pods for namespace %s\n", nameSpace)
+	c := client.NewClient()
+	c.C = service.Init()
 
-	err = client.CrateNameSpace("test-ns", clientset)
-	if err != nil {
-		fmt.Printf("error creating namespace: %v\n", err)
-		os.Exit(0)
-	}
-
-	err = client.CheckPodEnv("test-ns", clientset)
-	if err != nil {
-		fmt.Printf("error checking envvar: %v", err)
-	}
-
-	// err = client.CreatePodWithNamespace("test-ns", "example", clientset)
-	// if err != nil {
-	// 	fmt.Printf("error creating pod with namespace: %v\n", err)
-	// 	os.Exit(0)
-	// }
-
-	// err = client.DeletePodWithNamespce("book", "example", clientset)
-	// if err != nil {
-	// 	fmt.Printf("error deleting pod: %v\n", err)
-	// 	os.Exit(0)
-	// }
+	c.CheckPodEnv(nameSpace)
 }

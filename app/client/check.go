@@ -3,16 +3,21 @@ package client
 import (
 	"fmt"
 	"log"
-
-	"k8s.io/client-go/kubernetes"
 )
 
 const (
 	ENVNAME = "TEST_ENV_NAME"
 )
 
-func CheckPodEnv(namespace string, clientset *kubernetes.Clientset) error {
-	pods, err := ListPodWithNamespace(namespace, clientset)
+func (c *Client) CheckPodEnv(ns string) {
+	err := c.check(ns)
+	if err != nil {
+		log.Fatalf("error checking envvar: %v", err)
+	}
+}
+
+func (c *Client) check(namespace string) error {
+	pods, err := ListPodWithNamespace(namespace, c.C)
 	if err != nil {
 		return fmt.Errorf("list pod: %s", err.Error())
 	}
@@ -29,7 +34,7 @@ func CheckPodEnv(namespace string, clientset *kubernetes.Clientset) error {
 		}
 		if !envSet {
 			log.Printf("No envvar name %s - Deleting pod with name %s\n", ENVNAME, pod.Name)
-			err = DeletePodWithNamespce(namespace, pod.Name, clientset)
+			err = DeletePodWithNamespce(namespace, pod.Name, c.C)
 			if err != nil {
 				return err
 			}
