@@ -2,12 +2,13 @@ package client
 
 import (
 	"fmt"
+	"log"
 
 	"k8s.io/client-go/kubernetes"
 )
 
 const (
-	ENVNAME = "test-env-name"
+	ENVNAME = "TEST_ENV_NAME"
 )
 
 func CheckPodEnv(namespace string, clientset *kubernetes.Clientset) error {
@@ -21,13 +22,13 @@ func CheckPodEnv(namespace string, clientset *kubernetes.Clientset) error {
 		for _, cntr := range pod.Spec.Containers {
 			for _, env := range cntr.Env {
 				if env.Name == ENVNAME {
-					fmt.Println("Env value set. All set to go!")
+					log.Println("Env value set. All set to go!")
 					envSet = true
 				}
 			}
 		}
 		if !envSet {
-			fmt.Printf("No envvar name %s - Deleting pod with name %s\n", ENVNAME, pod.Name)
+			log.Printf("No envvar name %s - Deleting pod with name %s\n", ENVNAME, pod.Name)
 			err = DeletePodWithNamespce(namespace, pod.Name, clientset)
 			if err != nil {
 				return err

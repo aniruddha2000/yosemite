@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-env
+  namespace: test-ns
+spec:
+  containers:
+    - name: test-env-container
+      image: alpine
+      env:
+      - name: TEST_ENV_NAME
+        value: test-value
