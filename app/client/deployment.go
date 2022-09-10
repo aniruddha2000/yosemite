@@ -10,6 +10,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
+// List deployment resource with the given namespace
 func ListDeploymentWithNamespace(ns string, clientset *kubernetes.Clientset) (*v1.DeploymentList, error) {
 	deployment, err := clientset.AppsV1().Deployments(ns).List(ctx, metav1.ListOptions{})
 	if err != nil {
@@ -18,6 +19,7 @@ func ListDeploymentWithNamespace(ns string, clientset *kubernetes.Clientset) (*v
 	return deployment, nil
 }
 
+// Delete deployment resource with the given namespace
 func DeleteDeploymentWithNamespce(ns, name string, clientset *kubernetes.Clientset) error {
 	err := clientset.AppsV1().Deployments(ns).Delete(ctx, name, metav1.DeleteOptions{})
 	if err != nil {

@@ -10,6 +10,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
+// Create a new namespace with the given name
 func CrateNameSpace(namespeceName string, clientset *kubernetes.Clientset) error {
 	nameSpaceObj := &v1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{

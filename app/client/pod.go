@@ -10,6 +10,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
+// List pod resource with the given namespace
 func ListPodWithNamespace(namspace string, clientset *kubernetes.Clientset) (*v1.PodList, error) {
 	pods, err := clientset.CoreV1().Pods(namspace).List(ctx, metav1.ListOptions{})
 	if err != nil {
@@ -18,6 +19,7 @@ func ListPodWithNamespace(namspace string, clientset *kubernetes.Clientset) (*v1
 	return pods, nil
 }
 
+// Create pod resource with the given namespace and name
 func CreatePodWithNamespace(namespace, name string, clientset *kubernetes.Clientset) error {
 	podObj := &v1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
@@ -48,6 +50,7 @@ func CreatePodWithNamespace(namespace, name string, clientset *kubernetes.Client
 	return nil
 }
 
+// Delete pod resource with the given namespace and name
 func DeletePodWithNamespce(namespace, name string, clientset *kubernetes.Clientset) error {
 	err := clientset.CoreV1().Pods(namespace).Delete(ctx, name, metav1.DeleteOptions{})
 	if err != nil {

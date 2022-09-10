@@ -10,6 +10,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
+// Initializes the kube confif clientset
 func Init() *kubernetes.Clientset {
 	config, err := rest.InClusterConfig()
 	if err != nil {

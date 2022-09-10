@@ -14,6 +14,7 @@ const (
 	ENVNAME = "TEST_ENV_NAME"
 )
 
+// Check for Deployment and start a go routine if new deployment added
 func (c *Client) CheckDeploymentEnv(ns string) {
 	informerFactory := informers.NewSharedInformerFactory(c.C, 30*time.Second)
 

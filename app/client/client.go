@@ -14,6 +14,7 @@ type Client struct {
 	C *kubernetes.Clientset
 }
 
+// Return a new Client
 func NewClient() *Client {
 	return &Client{}
 }
