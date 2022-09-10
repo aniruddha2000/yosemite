@@ -5,6 +5,7 @@ metadata:
   labels:
     app: test-deployment
   name: deployment-with-env
+  namespace: test-ns
 spec:
   replicas: 1
   selector:
@@ -15,7 +16,7 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        app: client
+        app: test-deployment
     spec:
       containers:
         - name: test-env-container
@@ -32,6 +33,7 @@ metadata:
   labels:
     app: test-deployment
   name: deployment-without-env
+  namespace: test-ns
 spec:
   replicas: 1
   selector:
@@ -42,7 +44,7 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        app: client
+        app: test-deployment
     spec:
       containers:
         - name: test-env-container
