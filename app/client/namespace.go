@@ -23,7 +23,7 @@ func CrateNameSpace(namespeceName string, clientset *kubernetes.Clientset) error
 			log.Printf("Namespace already exists with name %s\n", namespeceName)
 			return nil
 		} else {
-			return fmt.Errorf("create namespace: %s", err.Error())
+			return fmt.Errorf("create namespace: %v", err)
 		}
 	}
 	log.Printf("namespace created %v\n", namespeceName)

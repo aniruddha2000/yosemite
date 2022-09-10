@@ -14,13 +14,13 @@ const (
 	ENVNAME = "TEST_ENV_NAME"
 )
 
-func (c *Client) CheckPodEnv(ns string) {
+func (c *Client) CheckDeploymentEnv(ns string) {
 	informerFactory := informers.NewSharedInformerFactory(c.C, 30*time.Second)
 
-	podInformer := informerFactory.Core().V1().Pods()
-	podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
+	deploymentInformer := informerFactory.Apps().V1().Deployments()
+	deploymentInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
-			log.Println("Pod added. Let's start checking!")
+			log.Println("Deployment added. Let's start checking!")
 			err := c.check(ns)
 			if err != nil {
 				log.Fatalf("error checking envvar: %v", err)
@@ -34,24 +34,24 @@ func (c *Client) CheckPodEnv(ns string) {
 }
 
 func (c *Client) check(namespace string) error {
-	pods, err := ListPodWithNamespace(namespace, c.C)
+	deployments, err := ListDeploymentWithNamespace(namespace, c.C)
 	if err != nil {
-		return fmt.Errorf("list pod: %s", err.Error())
+		return fmt.Errorf("list deployment: %s", err.Error())
 	}
 
-	for _, pod := range pods.Items {
+	for _, deployment := range deployments.Items {
 		var envSet bool
-		for _, cntr := range pod.Spec.Containers {
+		for _, cntr := range deployment.Spec.Template.Spec.Containers {
 			for _, env := range cntr.Env {
 				if env.Name == ENVNAME {
-					log.Printf("Pod name: %s has envvar. All set to go!", pod.Name)
+					log.Printf("Deployment name: %s has envvar. All set to go!", deployment.Name)
 					envSet = true
 				}
 			}
 		}
 		if !envSet {
-			log.Printf("No envvar name %s - Deleting pod with name %s\n", ENVNAME, pod.Name)
-			err = DeletePodWithNamespce(namespace, pod.Name, c.C)
+			log.Printf("No envvar name %s - Deleting deployment with name %s\n", ENVNAME, deployment.Name)
+			err = DeleteDeploymentWithNamespce(namespace, deployment.Name, c.C)
 			if err != nil {
 				return err
 			}

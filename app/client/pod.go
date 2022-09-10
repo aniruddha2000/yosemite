@@ -40,7 +40,7 @@ func CreatePodWithNamespace(namespace, name string, clientset *kubernetes.Client
 			log.Printf("Pod already exists with name %s\n", name)
 			return nil
 		} else {
-			return fmt.Errorf("create pod: %s", err.Error())
+			return fmt.Errorf("create pod: %v", err)
 		}
 	}
 	log.Printf("Pod object created with name %s\n", pod.ObjectMeta.Name)
@@ -55,7 +55,7 @@ func DeletePodWithNamespce(namespace, name string, clientset *kubernetes.Clients
 			log.Printf("Pod don't exists with name %s\n", name)
 			return nil
 		} else {
-			return fmt.Errorf("delete pod: %s", err.Error())
+			return fmt.Errorf("delete pod: %v", err)
 		}
 	}
 	log.Printf("pod deleted with name: %v\n", name)
