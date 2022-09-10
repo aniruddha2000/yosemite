@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: test-deployment
+  name: deployment-with-env
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-deployment
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: client
+    spec:
+      containers:
+        - name: test-env-container
+          image: alpine
+          env:
+            - name: TEST_ENV_NAME
+              value: test-value
+status: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: test-deployment
+  name: deployment-without-env
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-deployment
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: client
+    spec:
+      containers:
+        - name: test-env-container
+          image: alpine
