@@ -21,22 +21,32 @@ func (c *Client) CheckDeploymentEnv(ns string) {
 	deploymentInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
 			log.Println("Deployment added. Let's start checking!")
-			err := c.check(ns)
-			if err != nil {
-				log.Fatalf("error checking envvar: %v", err)
+
+			ch := make(chan error, 1)
+			done := make(chan bool)
+
+			go c.check(ns, ch, done)
+
+		loop:
+			for {
+				select {
+				case err := <-ch:
+					log.Fatalf("error checking envvar: %v", err)
+				case <-done:
+					break loop
+				}
 			}
 		},
 	})
 
 	informerFactory.Start(wait.NeverStop)
 	informerFactory.WaitForCacheSync(wait.NeverStop)
-
 }
 
-func (c *Client) check(namespace string) error {
+func (c *Client) check(namespace string, ch chan error, done chan bool) {
 	deployments, err := ListDeploymentWithNamespace(namespace, c.C)
 	if err != nil {
-		return fmt.Errorf("list deployment: %s", err.Error())
+		ch <- fmt.Errorf("list deployment: %s", err.Error())
 	}
 
 	for _, deployment := range deployments.Items {
@@ -53,9 +63,9 @@ func (c *Client) check(namespace string) error {
 			log.Printf("No envvar name %s - Deleting deployment with name %s\n", ENVNAME, deployment.Name)
 			err = DeleteDeploymentWithNamespce(namespace, deployment.Name, c.C)
 			if err != nil {
-				return err
+				ch <- err
 			}
 		}
 	}
-	return nil
+	done <- true
 }
